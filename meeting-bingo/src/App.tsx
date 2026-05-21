@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { LandingPage } from './components/LandingPage';
 import { CategorySelect } from './components/CategorySelect';
 import { GameBoard } from './components/GameBoard';
@@ -24,7 +24,7 @@ function loadInitialState(): GameState | undefined {
 }
 
 function App() {
-  const initial = useRef(loadInitialState()).current;
+  const [initial] = useState<GameState | undefined>(() => loadInitialState());
   const api = useGame(initial);
   const {
     game,

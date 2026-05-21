@@ -1,7 +1,7 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import type { UseGameApi } from '../hooks/useGame';
 import { useSpeechRecognition } from '../hooks/useSpeechRecognition';
-import { useToasts } from './ui/Toast';
+import { useToasts } from '../hooks/useToasts';
 import { ToastContainer } from './ui/Toast';
 import { BingoCard } from './BingoCard';
 import { TranscriptPanel } from './TranscriptPanel';
@@ -27,13 +27,16 @@ export function GameBoard({ api, onResetGame }: GameBoardProps) {
 
   // Keep refs to avoid stale closures inside the speech onResult callback.
   const alreadyFilledRef = useRef(alreadyFilledWords);
-  alreadyFilledRef.current = alreadyFilledWords;
   const cardWordsRef = useRef(card?.words ?? []);
-  cardWordsRef.current = card?.words ?? [];
   const fillByWordRef = useRef(fillSquareByWord);
-  fillByWordRef.current = fillSquareByWord;
   const pushRef = useRef(push);
-  pushRef.current = push;
+  // Update refs after each render so callbacks always see the latest values.
+  useLayoutEffect(() => {
+    alreadyFilledRef.current = alreadyFilledWords;
+    cardWordsRef.current = card?.words ?? [];
+    fillByWordRef.current = fillSquareByWord;
+    pushRef.current = push;
+  });
 
   const handleSpeechResult = useCallback((finalTranscript: string) => {
     const detected = detectWordsWithAliases(

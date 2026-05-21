@@ -1,6 +1,7 @@
-import { useCallback, useEffect, useState } from 'react';
-import type { ToastItem, ToastVariant } from '../../types';
+import { useEffect } from 'react';
+import type { ToastItem } from '../../types';
 import { cn } from '../../lib/utils';
+
 
 const MAX_VISIBLE = 3;
 const DEFAULT_DURATION = 2500;
@@ -56,19 +57,3 @@ export function ToastContainer({ toasts, onDismiss }: ToastContainerProps) {
   );
 }
 
-export function useToasts() {
-  const [toasts, setToasts] = useState<ToastItem[]>([]);
-
-  const push = useCallback((message: string, variant: ToastVariant = 'success') => {
-    const id = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
-    setToasts((prev) => [...prev, { id, message, variant }].slice(-MAX_VISIBLE));
-  }, []);
-
-  const dismiss = useCallback((id: string) => {
-    setToasts((prev) => prev.filter((t) => t.id !== id));
-  }, []);
-
-  const clear = useCallback(() => setToasts([]), []);
-
-  return { toasts, push, dismiss, clear };
-}
