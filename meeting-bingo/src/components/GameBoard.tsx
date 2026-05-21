@@ -69,11 +69,12 @@ export function GameBoard({ api, onResetGame }: GameBoardProps) {
   }, [speech, setListening, handleSpeechResult]);
 
   // Cleanup: stop listening when leaving the board.
+  // Use the stable stopListening ref (useCallback with [] deps) so this effect
+  // only runs on unmount — not on every render triggered by transcript updates.
+  const { stopListening } = speech;
   useEffect(() => {
-    return () => {
-      if (speech.isListening) speech.stopListening();
-    };
-  }, [speech]);
+    return () => stopListening();
+  }, [stopListening]);
 
   const nearWinSet = useMemo(() => {
     if (!card) return new Set<string>();
