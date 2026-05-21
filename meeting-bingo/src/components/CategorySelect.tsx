@@ -39,7 +39,7 @@ export function CategorySelect({
 
   if (step === 'preview' && card && selectedCategory) {
     return (
-      <div className="mx-auto flex min-h-screen max-w-xl flex-col items-center px-6 py-10">
+      <div className="mx-auto flex min-h-screen max-w-xl flex-col items-center px-4 py-8">
         <button
           type="button"
           onClick={onBack}
@@ -59,7 +59,7 @@ export function CategorySelect({
           </p>
         </div>
 
-        <div className="mt-6 w-full max-w-md">
+        <div className="mt-6 w-full">
           <BingoCard
             card={card}
             winningLine={null}
@@ -68,7 +68,7 @@ export function CategorySelect({
           />
         </div>
 
-        <div className="mt-6 flex w-full max-w-md flex-col gap-2 sm:flex-row">
+        <div className="mt-6 flex w-full flex-col gap-2 sm:flex-row">
           <Button variant="secondary" size="lg" className="flex-1" onClick={onRegenerate}>
             🔄 Regenerate
           </Button>
@@ -81,7 +81,7 @@ export function CategorySelect({
   }
 
   return (
-    <div className="mx-auto flex min-h-screen max-w-3xl flex-col items-center px-6 py-10">
+    <div className="mx-auto flex min-h-screen max-w-xl flex-col items-center px-4 py-8">
       <button
         type="button"
         onClick={onBack}

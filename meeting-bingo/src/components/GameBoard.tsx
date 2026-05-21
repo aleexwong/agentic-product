@@ -94,7 +94,7 @@ export function GameBoard({ api, onResetGame }: GameBoardProps) {
   }
 
   return (
-    <div className="mx-auto max-w-2xl px-4 py-6">
+    <div className="mx-auto max-w-xl px-4 py-8">
       <ToastContainer toasts={toasts} onDismiss={dismiss} />
 
       <header className="flex flex-wrap items-center justify-between gap-2">
