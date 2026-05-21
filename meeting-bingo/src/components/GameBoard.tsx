@@ -7,6 +7,7 @@ import { BingoCard } from './BingoCard';
 import { TranscriptPanel } from './TranscriptPanel';
 import { Button } from './ui/Button';
 import { detectWordsWithAliases } from '../lib/wordDetector';
+import { llmMatchWords, llmEnabled } from '../lib/llmWordMatcher';
 import { getClosestToWin } from '../lib/bingoChecker';
 import { cn } from '../lib/utils';
 
@@ -24,6 +25,7 @@ export function GameBoard({ api, onResetGame }: GameBoardProps) {
   const { toasts, push, dismiss } = useToasts();
   const [detectedWords, setDetectedWords] = useState<string[]>([]);
   const [confirmNewCard, setConfirmNewCard] = useState(false);
+  const [llmStatus, setLlmStatus] = useState<'idle' | 'scanning'>('idle');
 
   // Keep refs to avoid stale closures inside the speech onResult callback.
   const alreadyFilledRef = useRef(alreadyFilledWords);
@@ -38,27 +40,59 @@ export function GameBoard({ api, onResetGame }: GameBoardProps) {
     pushRef.current = push;
   });
 
-  const handleSpeechResult = useCallback((finalTranscript: string) => {
-    const detected = detectWordsWithAliases(
-      finalTranscript,
-      cardWordsRef.current,
-      alreadyFilledRef.current,
-    );
-    if (detected.length === 0) return;
+  // Accumulate transcript chunks until the user manually triggers AI scan.
+  const llmPendingTranscriptRef = useRef<string>('');
+
+  const applyDetected = useCallback((words: string[], source: 'regex' | 'ai') => {
     const newlyFilled: string[] = [];
-    for (const word of detected) {
+    for (const word of words) {
       const { filledSquare } = fillByWordRef.current(word, true);
       if (filledSquare) newlyFilled.push(filledSquare.word);
     }
     if (newlyFilled.length > 0) {
       setDetectedWords((prev) => [...prev, ...newlyFilled].slice(-20));
+      const label = source === 'ai' ? '✨ AI: ' : '🎉 ';
       const msg =
         newlyFilled.length === 1
-          ? `🎉 "${newlyFilled[0]}" detected!`
-          : `🎉 ${newlyFilled.map((w) => `"${w}"`).join(', ')} detected!`;
+          ? `${label}"${newlyFilled[0]}" detected!`
+          : `${label}${newlyFilled.map((w) => `"${w}"`).join(', ')} detected!`;
       pushRef.current(msg, 'success');
     }
   }, []);
+
+  const fireLlmCall = useCallback(() => {
+    const transcript = llmPendingTranscriptRef.current.trim();
+    llmPendingTranscriptRef.current = '';
+    if (!transcript || !llmEnabled) return;
+    const remaining = cardWordsRef.current.filter(
+      (w) => w !== 'FREE' && !alreadyFilledRef.current.has(w.toLowerCase()),
+    );
+    if (remaining.length === 0) return;
+    setLlmStatus('scanning');
+    llmMatchWords(transcript, remaining)
+      .then((matched) => {
+        applyDetected(matched, 'ai');
+        if (matched.length === 0) pushRef.current('AI found no matches', 'info');
+      })
+      .catch((err: unknown) => {
+        const msg = err instanceof Error ? err.message : String(err);
+        pushRef.current(`AI error: ${msg}`, 'warning');
+      })
+      .finally(() => { setLlmStatus('idle'); });
+  }, [applyDetected]);
+
+  const handleSpeechResult = useCallback((finalTranscript: string) => {
+    const regexMatched = detectWordsWithAliases(
+      finalTranscript,
+      cardWordsRef.current,
+      alreadyFilledRef.current,
+    );
+    applyDetected(regexMatched, 'regex');
+
+    if (llmEnabled) {
+      llmPendingTranscriptRef.current += ' ' + finalTranscript;
+    }
+  }, [applyDetected]);
 
   const handleToggleListening = useCallback(() => {
     if (!speech.isSupported) return;
@@ -159,6 +193,15 @@ export function GameBoard({ api, onResetGame }: GameBoardProps) {
             className={cn('min-w-[180px]')}
           >
             {speech.isListening ? '⏹ Stop Listening' : '🎤 Start Listening'}
+          </Button>
+        )}
+        {llmEnabled && (
+          <Button
+            variant="secondary"
+            onClick={fireLlmCall}
+            disabled={llmStatus === 'scanning'}
+          >
+            {llmStatus === 'scanning' ? '✨ Scanning…' : '✨ AI Scan'}
           </Button>
         )}
         <Button variant="ghost" onClick={onResetGame}>
