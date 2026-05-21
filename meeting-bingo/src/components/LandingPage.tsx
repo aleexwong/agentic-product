@@ -13,7 +13,7 @@ const HOW_IT_WORKS = [
 
 export function LandingPage({ onStart }: LandingPageProps) {
   return (
-    <div className="mx-auto flex min-h-screen max-w-2xl flex-col items-center justify-center px-6 py-12 text-center">
+    <div className="mx-auto flex min-h-screen max-w-xl flex-col items-center justify-center px-4 py-12 text-center">
       <div className="mb-3 text-5xl" aria-hidden="true">
         🎯
       </div>
@@ -36,7 +36,7 @@ export function LandingPage({ onStart }: LandingPageProps) {
         <h2 className="text-sm font-semibold uppercase tracking-wider text-gray-500">
           How it works
         </h2>
-        <ol className="mx-auto mt-4 grid max-w-xl grid-cols-1 gap-3 sm:grid-cols-2">
+        <ol className="mt-4 grid w-full grid-cols-1 gap-3 sm:grid-cols-2">
           {HOW_IT_WORKS.map((step, i) => (
             <li
               key={step.text}

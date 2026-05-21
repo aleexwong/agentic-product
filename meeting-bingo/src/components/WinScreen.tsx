@@ -42,7 +42,7 @@ export function WinScreen({ game, onPlayAgain, onHome }: WinScreenProps) {
       <h1 className="text-3xl font-bold text-gray-900 sm:text-4xl">🎉 BINGO! 🎉</h1>
       <p className="mt-1 text-sm text-gray-600">Nice work — you spotted the buzzwords.</p>
 
-      <div className="mx-auto mt-5 w-full max-w-md">
+      <div className="mt-5 w-full">
         <BingoCard
           card={game.card}
           winningLine={game.winningLine}
@@ -51,7 +51,7 @@ export function WinScreen({ game, onPlayAgain, onHome }: WinScreenProps) {
         />
       </div>
 
-      <dl className="mx-auto mt-6 grid max-w-md grid-cols-2 gap-3 text-left text-sm sm:grid-cols-4">
+      <dl className="mt-6 grid w-full grid-cols-2 gap-3 text-left text-sm sm:grid-cols-4">
         <Stat label="Time" value={`${minutes} min`} />
         <Stat label="Winning word" value={`"${game.winningWord ?? '—'}"`} />
         <Stat label="Filled" value={`${game.filledCount}/24`} />
