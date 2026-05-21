@@ -3,7 +3,7 @@ import type { ToastItem, ToastVariant } from '../types';
 
 const MAX_VISIBLE = 3;
 
-/** Manages a queue of up to MAX_VISIBLE toast notifications. */
+/** Manages a capped queue of toast notifications (max 3 visible). Provides push, dismiss, and clear. */
 export function useToasts() {
   const [toasts, setToasts] = useState<ToastItem[]>([]);
 

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
+/** Public API surface returned by useSpeechRecognition. */
 export interface UseSpeechRecognitionApi {
   isSupported: boolean;
   isListening: boolean;
@@ -16,6 +17,7 @@ function getRecognitionCtor(): SpeechRecognitionConstructor | null {
   return window.SpeechRecognition ?? window.webkitSpeechRecognition ?? null;
 }
 
+/** Wraps the Web Speech API with auto-restart on end, interim results, and Strict Mode safety via shouldListenRef. */
 export function useSpeechRecognition(): UseSpeechRecognitionApi {
   const RecognitionCtor = getRecognitionCtor();
   const isSupported = RecognitionCtor !== null;

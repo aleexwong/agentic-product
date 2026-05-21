@@ -32,6 +32,7 @@ function cloneCard(card: BingoCard): BingoCard {
   };
 }
 
+/** Public API surface returned by useGame. */
 export interface UseGameApi {
   game: GameState;
   loadGameState(state: GameState): void;
@@ -47,6 +48,7 @@ export interface UseGameApi {
   alreadyFilledWords: ReadonlySet<string>;
 }
 
+/** Core game state manager. Handles card generation, square filling, bingo detection, and win state. */
 export function useGame(initial: GameState = INITIAL_STATE): UseGameApi {
   const [game, setGame] = useState<GameState>(initial);
 

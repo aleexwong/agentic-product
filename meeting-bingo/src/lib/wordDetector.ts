@@ -36,6 +36,7 @@ function matchesWord(transcript: string, word: string): boolean {
   return false;
 }
 
+/** Scans a speech transcript for bingo words, matching common aliases (e.g. "CI/CD" → "cicd"). Returns matched words not already filled. */
 export function detectWordsWithAliases(
   transcript: string,
   cardWords: readonly string[],

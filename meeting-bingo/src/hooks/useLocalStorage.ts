@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
+/** Syncs a state value to localStorage, hydrating on mount and persisting on every change. Silently ignores quota/privacy errors. */
 export function useLocalStorage<T>(
   key: string,
   defaultValue: T,

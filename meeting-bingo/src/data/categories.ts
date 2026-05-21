@@ -168,6 +168,7 @@ export const CATEGORIES: Category[] = [
   },
 ];
 
+/** Looks up a category by ID. Throws if the ID is not registered in CATEGORIES. */
 export function getCategoryById(id: Category['id']): Category {
   const category = CATEGORIES.find((c) => c.id === id);
   if (!category) throw new Error(`Unknown category: ${id}`);

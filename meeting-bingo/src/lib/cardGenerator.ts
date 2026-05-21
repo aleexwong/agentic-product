@@ -10,6 +10,7 @@ function shuffle<T>(array: readonly T[]): T[] {
   return arr;
 }
 
+/** Generates a randomised 5×5 bingo card for the given category, placing FREE at the centre. */
 export function generateCard(categoryId: CategoryId): BingoCard {
   const category = getCategoryById(categoryId);
   const picked = shuffle(category.words).slice(0, 24);

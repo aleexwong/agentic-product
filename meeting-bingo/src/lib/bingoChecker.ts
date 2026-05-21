@@ -1,5 +1,6 @@
 import type { BingoCard, WinningLine } from '../types';
 
+/** Checks a 5×5 bingo card for any completed row, column, or diagonal. Returns the first winning line found, or null. */
 export function checkForBingo(card: BingoCard): WinningLine | null {
   const grid = card.squares;
 
@@ -41,6 +42,7 @@ export function checkForBingo(card: BingoCard): WinningLine | null {
   return null;
 }
 
+/** Describes a line that is exactly one square away from a bingo. */
 export interface NearWinLine {
   type: 'row' | 'column' | 'diagonal';
   index: number;
@@ -48,6 +50,7 @@ export interface NearWinLine {
   missingWord: string;
 }
 
+/** Returns every line that has exactly 4 of 5 squares filled (near-win state). */
 export function getClosestToWin(card: BingoCard): NearWinLine[] {
   const grid = card.squares;
   const result: NearWinLine[] = [];
