@@ -60,6 +60,8 @@ export function useSpeechRecognition(): UseSpeechRecognitionApi {
 
     recognition.onerror = (event) => {
       if (event.error === 'no-speech' || event.error === 'aborted') return;
+      // Stop auto-restart on network loss to prevent a rapid restart loop
+      if (event.error === 'network') shouldListenRef.current = false;
       setError(event.error || 'Speech recognition error');
     };
 
